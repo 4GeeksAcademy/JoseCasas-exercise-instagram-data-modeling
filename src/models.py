@@ -7,26 +7,45 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+class User(Base):
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    username = Column(String, unique=True, nullable=False)
+    password = Column(String, unique=False, nullable=False)
+    first_name = Column(String, unique=False, nullable=False)
+    last_name = Column(String, unique=False, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    phone_number =Column(String, unique=False, nullable=True)
+    gender = Column(String, unique=False, nullable=False)
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+
+class Post(Base):
+    __tablename__ = 'posts'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    title = Column(String, unique=False, nullable=False)
+    body = Column(String, unique=False, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
 
     def to_dict(self):
         return {}
+    
+class Comment(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, primary_key=True)
+    body = Column(String, unique=False, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('posts.id'))
+    post = relationship(Post)
+
+class Follow(Base):
+    __tablename__ = "follows"
+    id = Column(Integer, primary_key=True)
+    following_user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
+    followed_user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
 
 ## Draw from SQLAlchemy base
 try:
